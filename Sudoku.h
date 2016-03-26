@@ -35,7 +35,7 @@ class Sudoku{
         void changeNum(int a, int b);
         void changeRow(int a, int b);
         void changeCol(int a, int b);
-        void rotate(int a);
+        void rotate(int n);
         void flip(int n);
         void transform();
         
@@ -254,6 +254,75 @@ void Sudoku::changeCol(int a, int b){
     }
 }
 
+void Sudoku::rotate(int n){
+    int a;
+    sudokuCell copy(81);
+    a = n % 4;
+    switch(a){
+        case 1 :
+            for(i = 0; i < 81; i++)
+                copy[i] = cell[i];
+
+            for(int i = 8; i >= 0; i--) 
+                for(int j = 0; j < 9; j++){
+                    cell[(8 - i) + 9 * j] = copy[9 * (8 - i) + j];
+                } 
+            break;
+
+        case 2 :
+            for(i = 0; i < 81; i++)
+                copy[i] = cell[i];
+
+            for(int i = 8; i >= 0; i--)
+                for(int j = 8; j >= 0; j--){
+                    cell[i * 9 + j] = copy[(8 - j) + 9 * (8 - i)]
+                }
+            break;
+
+        case 3 :
+            for(i = 0; i < 81; i++)
+                copy[i] = cell[i];
+
+            for(int i = 0; i < 9; i++)
+                for(int j = 8; j >= 0; j--){
+                    cell[j * 9 + i] = copy[ (8 - j) + i * 9];
+                }
+            break;            
+    }
+
+}
+
+void Sudoku::flip(int n){
+    sudokuCell copy[81];
+    if(n == 0){
+        for(i = 0; i < 81; i++)
+            copy[i] = cell[i];
+        
+        for(i = 8; i > 4; i--)
+            for(j = 0; j < 9; j++)
+                cell[i * 9 + j] = copy[(8 - i) * 9 + j];
+
+        for(i = 8; i > 4; i--)
+            for(j = 0; j < 9; j++)
+                cell[(8 - i) * 9 + j] = copy[i * 9 + j];
+
+    }
+    
+    if(n == 1){
+        for(i = 0; i < 81; i++)
+            copy[i] = cell[i];
+
+        for(i = 0; i < 4; i++)
+            for(j = 0; j < 9; j++)
+                cell[j * 9 + i] = copy[(8 - i) + j * 9];
+
+        for(i = 0; i < 4; i++)
+            for(j = 0; j < 9; j++)
+                cell[(8 - i) + j * 9] = copy[j * 9 + i];
+    
+    }
+
+}
 
 void Sudoku::giveQuestion(){
     int array[81] = { 8, 0, 0, 0, 0, 0, 0, 0, 0,
