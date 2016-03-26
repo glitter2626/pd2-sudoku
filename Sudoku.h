@@ -43,6 +43,7 @@ class Sudoku{
         bool setCandidatorTofixed(int sp, int trynum);
         bool exlusiveCorrelativeCandidators(int sp, int trynum);
         bool processSinglesCandidature(int sp);
+        void printSudokuSolution();
 
     private:
         vector<sudokuCell> cell(81);
@@ -201,5 +202,74 @@ void Sudoku::solve(){
     }                
 }
 
+void Sudoku::changeNum(int a, int b){
+    int as, bs;
+    sudokuCell temp;
+    if(a <= 9 && a >= 1 && b <= 9 && b >= 1){
+        as = 0;
+        bs = 0;
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                if(cell[i * 9 + j].num == a){
+                    as = i * 9 + j;
+                    continue;    
+                }
+                if(cell[i * 9 + j].num == b){
+                    bs = i * 9 + j;
+                    continue;
+                }
+            }
+            if(as == 0 && bs == 0)
+                continue;
+            else{
+                temp = cell[as];
+                cell[as] = cell[bs];
+                cell[bs] = temp;
+            }
+        }
+    } 
+}
 
+void Sudoku::changeRow(int a, int b){
+    if( a >= 0 && a <= 2 && b >= 0 && b <= 2 && a != b){ 
+     sudokuCell copy[27];
+    for(i = 0; i < 27; i++)
+        copy[i] = cell[ 27 * a + i];
+    for(i = 0; i < 27; i++)
+        cell[27 * a + i] = cell[27 * b + i];
+    for(i = 0; i < 27; i++)
+        cell[27 * b + i] = copy[i];    
+    } 
+}
+
+void Sudoku::changeCol(int a, int b){
+    if( a >= 0 && a <= 2 && b >= 0 && b <= 2 && a != b){
+    sudokuCell copy[27];
+    for(i = 0; i < 27; i++)
+        copy[i] = cell[i * 9 + a * 3];
+    for(i = 0; i < 27; i++)
+        cell[i * 9 + a * 3] = cell[i * 9 + b * 3];
+    for(i = 0; i < 27; i++)
+        cell[i * 9 + b * 3] = copy[i];
+    }
+}
+
+
+void Sudoku::giveQuestion(){
+    int array[81] = { 8, 0, 0, 0, 0, 0, 0, 0, 0,
+                      0, 0, 3, 6, 0, 0, 0, 0, 0,
+                      0, 7, 0, 0, 9, 0, 2, 0, 0,
+                      0, 5, 0, 0, 0, 7, 0, 0, 0,
+                      0, 0, 0, 0, 4, 5, 7, 0, 0,
+                      0, 0, 0, 1, 0, 0, 0, 3, 0,
+                      0, 0, 1, 0, 0, 0, 0, 6, 8,
+                      0, 0, 8, 5, 0, 0, 0, 1, 0,
+                      0, 9, 0, 0, 0, 0, 4, 0, 0 } 
+
+    for(i = 0; i < 9; i++){
+        for(j = 0; j < 9; j++)
+            cout<<array[i * 9 + j]<<" ";
+        cout<<endl;
+    }    
+}
 #endif
