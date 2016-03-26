@@ -7,6 +7,7 @@
 #include<iterator>
 #include<algorithm>
 #include<cstdlib>
+#include<time>
 
 using std::cin;
 using std::cout;
@@ -322,6 +323,17 @@ void Sudoku::flip(int n){
     
     }
 
+}
+
+void Sudoku::transform(){
+    srand(time(NULL));
+    readIn();
+    changeNum(rand() % 9 + 1, rand() % 9 + 1);
+    changeRow(rand() % 3, rand() % 3);
+    changeCol(rand() % 3, rand() % 3);
+    rotate(rand() % 101);
+    flip(rand() % 2);
+    printSudokuSolution();    
 }
 
 void Sudoku::giveQuestion(){
