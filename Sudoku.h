@@ -41,8 +41,8 @@ class Sudoku{
         
         void findSudokuSolution(Sudoku & game, int sp);
         bool setCandidatorTofixed(int sp, int trynum);
-        bool ExlusiveCorrelativeCandidators(int sp, int trynum);
-        bool ProcessSinglesCandidature(int sp, int trynum);
+        bool exlusiveCorrelativeCandidators(int sp, int trynum);
+        bool processSinglesCandidature(int sp);
 
     private:
         vector<sudokuCell> cell(81);
@@ -125,7 +125,7 @@ void Sudoku::findSudokuSolution(int sp){
     
 }
 
-bool Sudoku::ExclusiveCorrelativeCandidators(int sp, int trynum){
+bool Sudoku::exclusiveCorrelativeCandidators(int sp, int trynum){
     
     int row = sp / 9;
     int col = sp % 9;
@@ -149,6 +149,30 @@ bool Sudoku::ExclusiveCorrelativeCandidators(int sp, int trynum){
     return true;
 }
 
+bool Sudoku::processSinglesCandidature(int sp){
+    int row = sp / 9;
+    int col = sp % 9;
+    for( i = 0; i < 9; i++){
+        if(!cell[row * 9 + i].fixed && cell[row * 9 + i].candidators.size()==1)
+            if(!setCandidatorTofixed(sp, *(cell[row * 9 + i].candidators.begin()            )))
+                return false;
+
+        if(!cell[col + 9 * i].fixed && cell[col + 9 * i].candidators.size()==1)
+            if(!setCandidatorTofixed(sp, *(cell[col + 9 * i].candidators.begin()            )))
+                return false;
+    }
+
+    for( i = 0; i < 3; i++)
+        for( j = 0; j < 3; j++){
+            if(!cell[(row / 3 + i) + j].fixed && cell[(row / 3 + i) + j].candidators.size()==1)
+                if(!setCandidatorTofixed(sp, *(cell[(row / 3 + i) + j].candidators.begin())))
+                return false;
+        }
+
+    return true;
+}
+
+
 bool Sudoku::setCandidatorTofixed(int sp, int trynum){
     
     cell[sp].fixed = true;
@@ -156,7 +180,7 @@ bool Sudoku::setCandidatorTofixed(int sp, int trynum){
 
     if(!exclusiveCorrelativeCandidators(sp, trynum))
         return false;
-    if(!ProcessSinglesCandidature(sp, trynum))
+    if(!processSinglesCandidature(sp))
         return false;
 
     fixedcount++;
@@ -166,7 +190,15 @@ bool Sudoku::setCandidatorTofixed(int sp, int trynum){
 void Sudoku::solve(){
     readIn();
     findSudokuSolution(0);
-        
+    if(answer == 0)
+        cout<<0<<endl;
+    if(answer == 1){
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++)
+                cout<<ans1[i * 9 + j]<<" ";
+             cout<<endl;
+        }
+    }                
 }
 
 
