@@ -113,7 +113,7 @@ void Sudoku::printSudokuSolution(){
             cout<<cell[i * 9 + j].num<<" ";
         cout<<endl;
     } 
-        std::ostream_iterator<int, char > ot(cout, " ");
+   /*     std::ostream_iterator<int, char > ot(cout, " ");
 
     for(int i = 0; i < 81; i++){
         copy(cell[i].candidators.begin(), cell[i].candidators.end(), ot);
@@ -124,7 +124,7 @@ void Sudoku::printSudokuSolution(){
     for(int j = 0; j < 9; j++)
     cout<<cell[i*9 + j].fixed<<" ";
     cout<<endl;
-    }
+    } */
 }
 
 void Sudoku::findSudokuSolution(int sp){
@@ -241,7 +241,7 @@ void Sudoku::solve(){
         validcandidators(i);
       /*  copy(cell[i].candidators.begin(), cell[i].candidators.end(), ot);
         cout<<endl;
-    }*/
+    */
     findSudokuSolution(0);
     if(answer == 2)
         cout<<2<<endl;
@@ -276,29 +276,29 @@ void Sudoku::validcandidators(int sp){
 
 
 void Sudoku::changeNum(int a, int b){
-    int as, bs;
+    /*int as, bs;*/
     sudokuCell temp;
     if(a <= 9 && a >= 1 && b <= 9 && b >= 1){
-        as = 0;
-        bs = 0;
+        /*as = 0;
+        bs = 0;*/
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
                 if(cell[i * 9 + j].num == a){
-                    as = i * 9 + j;
+                    cell[ i * 9 + j].num = b;
                     continue;    
                 }
                 if(cell[i * 9 + j].num == b){
-                    bs = i * 9 + j;
+                    cell[ i * 9 + j].num = a;
                     continue;
                 }
             }
-            if(as == 0 && bs == 0)
+            /*if(as == 0 && bs == 0)
                 continue;
             else{
                 temp = cell[as];
                 cell[as] = cell[bs];
                 cell[bs] = temp;
-            }
+            }*/
         }
     } 
 }
@@ -317,13 +317,44 @@ void Sudoku::changeRow(int a, int b){
 
 void Sudoku::changeCol(int a, int b){
     if( a >= 0 && a <= 2 && b >= 0 && b <= 2 && a != b){
-    sudokuCell copy[27];
-    for(int i = 0; i < 27; i++)
-        copy[i] = cell[i * 9 + a * 3];
-    for(int i = 0; i < 27; i++)
-        cell[i * 9 + a * 3] = cell[i * 9 + b * 3];
-    for(int i = 0; i < 27; i++)
-        cell[i * 9 + b * 3] = copy[i];
+        sudokuCell copy[27];
+        int j = 0, k1 = 3 * a, k2 =3 * b;
+        for(int i = 0; i < 27; i++){
+            if(j > 8){
+                j = 0;
+                k1 += 1;
+            }
+            copy[i] = cell[j * 9 + k1];
+            j++;
+        }
+
+        j = 0;
+        k1 =3 * a;
+        k2 =3 * b;
+
+        for(int i = 0; i < 27; i++){
+            if(j > 8){
+                j = 0;
+                k1 += 1;
+                k2 += 1;
+            }
+            cell[j * 9 + k1 ] = cell[j * 9 + k2 ];
+            j++;
+
+        }
+
+        j = 0;
+        k1 = 3 * a;
+        k2 = 3 * b;
+
+        for(int i = 0; i < 27; i++){
+            if(j > 8){
+                j = 0;
+                k2 += 1;
+            }
+            cell[j * 9 + k2] = copy[i];
+            j++;
+        }
     }
 }
 
@@ -338,7 +369,7 @@ void Sudoku::rotate(int n){
 
             for(int i = 8; i >= 0; i--) 
                 for(int j = 0; j < 9; j++){
-                    cell[(8 - i) + 9 * j] = copy[9 * (8 - i) + j];
+                    cell[ i + 9 * j] = copy[9 * (8 - i) + j];
                 } 
             break;
 
@@ -398,7 +429,8 @@ void Sudoku::flip(int n){
 }
 
 void Sudoku::transform(){
-    srand(time(NULL));
+    unsigned seed = (unsigned)time(NULL);
+    srand(seed);
     readIn();
     changeNum(rand() % 9 + 1, rand() % 9 + 1);
     changeRow(rand() % 3, rand() % 3);
