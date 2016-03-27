@@ -128,32 +128,40 @@ void Sudoku::printSudokuSolution(){
 }
 
 void Sudoku::findSudokuSolution(int sp){
-    if(fixedcount == 81){
-        if(++answer < 2)
-        for(int i = 0; i < 81; i++)
-            ans1[i] = cell[i].num;
+    if(fixedcount == 81 ){
+       /* for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9;j++)
+                cout<<cell[i * 9 + j].num<<" ";
+        cout<<endl;
+        }*/
+    
+        if(++answer < 2){
+            for(int i = 0; i < 81; i++)
+                ans1[i] = cell[i].num;
+        }
         return;
     }
 
     while(cell[sp].fixed == true){
         sp++;
         if(sp >= 81)
-            return(findSudokuSolution(sp));
-    }
+            return findSudokuSolution(sp);
 
+    }
+    if(sp < 81){
     Sudoku newState;
     set<int>::iterator it = cell[sp].candidators.begin();
     while(it != cell[sp].candidators.end()){
         newState = *this;
-        if(newState.setCandidatorTofixed(sp, *it))
+        if(newState.setCandidatorTofixed(sp, *it))    
             newState.findSudokuSolution(sp + 1);
-
+        
         ++it;
 
         if(answer == 2)
             return;
     }
-    
+    }
 }
 
 bool Sudoku::exclusiveCorrelativeCandidators(int sp, int trynum){
@@ -161,13 +169,13 @@ bool Sudoku::exclusiveCorrelativeCandidators(int sp, int trynum){
     int row = sp / 9;
     int col = sp % 9;
     for(int i = 0; i < 9; i++){
-        if(!cell[row * 9 + i].fixed){
+        if(!cell[row * 9 + i].fixed ){
             cell[row * 9 + i].candidators.erase(trynum);
             if(cell[row * 9 + i].candidators.empty())
                 return false;
         }
 
-        if(!cell[col + 9 * i].fixed){
+        if(!cell[col + 9 * i].fixed ){
             cell[col + 9 * i].candidators.erase(trynum);
             if(cell[col + 9 * i].candidators.empty())
                 return false;
@@ -176,9 +184,9 @@ bool Sudoku::exclusiveCorrelativeCandidators(int sp, int trynum){
 
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++){
-            if(!cell[row / 3 + (col / 3) * 3 + i * 9 + j].fixed){
-                cell[row / 3 + ( col / 3 ) * 3 + i * 9 + j].candidators.erase(trynum);
-                if(cell[row / 3 + (col / 3) * 3 + i * 9 + j].candidators.empty())
+            if(!cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].fixed){
+                cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].candidators.erase(trynum);
+                if(cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].candidators.empty())
                     return false;
             }
         }
@@ -191,18 +199,18 @@ bool Sudoku::processSinglesCandidature(int sp){
     int col = sp % 9;
     for(int i = 0; i < 9; i++){
         if(!cell[row * 9 + i].fixed && cell[row * 9 + i].candidators.size()==1)
-            if(!setCandidatorTofixed(sp, *(cell[row * 9 + i].candidators.begin()            )))
+            if(!setCandidatorTofixed(row * 9 + i, *(cell[row * 9 + i].candidators.begin()            )))
                 return false;
 
         if(!cell[col + 9 * i].fixed && cell[col + 9 * i].candidators.size()==1)
-            if(!setCandidatorTofixed(sp, *(cell[col + 9 * i].candidators.begin()            )))
+            if(!setCandidatorTofixed(col + 9 * i, *(cell[col + 9 * i].candidators.begin()            )))
                 return false;
     }
 
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++){
-            if(!cell[row / 3 + (col / 3) * 3 + i * 9 + j].fixed && cell[row / 3 + (col / 3) * 3 + i * 9 + j].candidators.size()==1)
-                if(!setCandidatorTofixed(sp, *(cell[row / 3 + (col / 3) * 3 + i * 9 + j].candidators.begin())))
+            if(!cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].fixed && cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].candidators.size()==1)
+                if(!setCandidatorTofixed((row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j, *(cell[(row / 3) * 3 * 9 + (col / 3) * 3 + i * 9 + j].candidators.begin())))
                 return false;
         }
 
@@ -212,39 +220,35 @@ bool Sudoku::processSinglesCandidature(int sp){
 
 bool Sudoku::setCandidatorTofixed(int sp, int trynum){
     
-   /* if(!validcandidators(sp, trynum))
-        return false;
-    else{ */   
-        cell[sp].fixed = true;
-        cell[sp].num = trynum;
-        cell[sp].candidators.clear();
-   /* } */
-
-
+    cell[sp].fixed = true;
+    cell[sp].num = trynum;
+    cell[sp].candidators.clear();
+    
 
     if(!exclusiveCorrelativeCandidators(sp, trynum))
         return false;
     if(!processSinglesCandidature(sp))
         return false;
     fixedcount++;
-    cout<<sp<<" is "<<trynum<<endl;
+    
     return true;    
 }
 
 void Sudoku::solve(){
     readIn();
-    std::ostream_iterator<int, char> ot(cout, " ");
-    for(int i = 0; i < 81; i++){
+   std::ostream_iterator<int, char> ot(cout, " ");
+    for(int i = 0; i < 81; i++)
         validcandidators(i);
-        copy(cell[i].candidators.begin(), cell[i].candidators.end(), ot);
+      /*  copy(cell[i].candidators.begin(), cell[i].candidators.end(), ot);
         cout<<endl;
-    }
+    }*/
     findSudokuSolution(0);
     if(answer == 2)
         cout<<2<<endl;
     if(answer == 0)
         cout<<0<<endl;
     if(answer == 1){
+        cout<<1<<endl;
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++)
                 cout<<ans1[i * 9 + j]<<" ";
@@ -264,8 +268,8 @@ void Sudoku::validcandidators(int sp){
     }
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++){
-            if(cell[(sp / 9 ) / 3 + ((sp % 9) / 3) * 3 +  i * 9 + j].fixed)
-                cell[sp].candidators.erase(cell[(sp / 9) / 3 + ((sp % 9) / 3) * 3 + i * 9 + j].num);
+            if(cell[((sp / 9 ) / 3) * 3 * 9 + ((sp % 9) / 3) * 3 +  i * 9 + j].fixed)
+                cell[sp].candidators.erase(cell[((sp / 9 ) / 3) * 3 * 9 + ((sp % 9) / 3) * 3 +  i * 9 + j].num);
         }
     
 }
