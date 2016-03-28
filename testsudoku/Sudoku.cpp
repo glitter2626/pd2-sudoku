@@ -227,16 +227,16 @@ bool Sudoku::trushsudoku(int sp){
     int row = sp / 9;
     int col = sp % 9;
     for(int i = 0; i < 9; i++){
-        if(cell[row * 9 + i].num == cell[sp].num)
+        if(cell[row * 9 + i].num == cell[sp].num && (row * 9 + i) != sp)
             return true;
 
-        if(cell[col + 9 * i].num == cell[sp].num)
+        if(cell[col + 9 * i].num == cell[sp].num && (col + 9 * i) != sp)
             return true;
 
     }
     for(int i = 0; i < 3; i++)
         for(int j = 0; j < 3; j++){
-            if(cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].num == cell[sp].num)
+            if(cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].num == cell[sp].num && ((row / 3) * 3 * 9 + (col / 3) * 3 + i  * 9 + j) != sp)
                 return true;
         }
     return false;
