@@ -177,8 +177,15 @@ bool Sudoku::setCandidatorTofixed(int sp, int trynum){
 void Sudoku::solve(){
    /* readIn();
    std::ostream_iterator<int, char> ot(cout, " ");*/
-    for(int i = 0; i < 81; i++)
-        validcandidators(i);
+    for(int i = 0; i < 81; i++){
+        if(!cell[i].fixed)
+            validcandidators(i);
+        else
+            if(trushsudoku(i)){
+                cout<<0<<endl;
+                return;
+            }
+    }
       /*  copy(cell[i].candidators.begin(), cell[i].candidators.end(), ot);
         cout<<endl;
     */
@@ -214,6 +221,25 @@ void Sudoku::validcandidators(int sp){
                 cell[sp].candidators.erase(cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].num);
         }
     
+}
+
+bool Sudoku::trushsudoku(int sp){
+    int row = sp / 9;
+    int col = sp % 9;
+    for(int i = 0; i < 9; i++){
+        if(cell[row * 9 + i].num == cell[sp].num)
+            return true;
+
+        if(cell[col + 9 * i].num == cell[sp].num)
+            return true;
+
+    }
+    for(int i = 0; i < 3; i++)
+        for(int j = 0; j < 3; j++){
+            if(cell[(row / 3) * 3 * 9 + (col / 3) * 3 +  i * 9 + j].num == cell[sp].num)
+                return true;
+        }
+    return false;
 }
 
 

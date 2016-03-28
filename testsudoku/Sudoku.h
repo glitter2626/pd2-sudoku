@@ -7,7 +7,6 @@
 #include<iterator>
 #include<algorithm>
 #include<cstdlib>
-#include<ctime>
 #include<algorithm>
 
 using std::cin;
@@ -45,6 +44,7 @@ class Sudoku{
         bool processSinglesCandidature(int sp);
         void printSudokuSolution();
         void validcandidators(int sp);
+        bool trushsudoku(int sp);
 
     private:
         Sudoku(Sudoku &a){}
